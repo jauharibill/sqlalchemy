@@ -7,12 +7,31 @@ class UserController:
         self.conn = database()
 
     def index(self):
-        row = self.conn.session.execute(select([User]))
-        return row.fetchall()
+        return self.conn.\
+            session.\
+            execute(select([User])).\
+            fetchall()
 
-    def create(self):
-        return self.conn.session.add(User(
-            firstname="Bill Tanthowi",
-            lastname="Jauhari",
-            age=26,
-            phone="082245088948"))
+    def create(self, data):
+
+        firstname = data[0]
+        lastname = data[1]
+        age = data[2]
+        phone = data[3]
+
+        self.conn.session.add(User(
+            firstname=firstname,
+            lastname=lastname,
+            age=age,
+            phone=phone))
+
+        return self.conn.session.commit()
+
+    def show(self, id):
+        return self.conn.session.query(User).filter(User.id==id)
+
+    def update(self, id, data):
+        user = self.conn.session.query(User).get(id)
+        user.firstname = data[0]
+        user.lastname = data[1]
+        return self.conn.session.commit()
